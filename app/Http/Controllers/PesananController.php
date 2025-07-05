@@ -172,4 +172,24 @@ class PesananController extends Controller
         $pesanan->load(['pelanggan', 'detail.layanan']);
         return view('admin.pesanan.cetak', compact('pesanan'));
     }
+
+    /**
+     * Update status pembayaran via AJAX
+     */
+    public function updateStatusBayar(Request $request, Pesanan $pesanan)
+    {
+        $request->validate([
+            'status_pembayaran' => 'required|in:sudah_bayar,bayar_sebagian,belum_bayar'
+        ]);
+
+        $pesanan->update([
+            'status_pembayaran' => $request->status_pembayaran
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pembayaran berhasil diupdate',
+            'status_pembayaran' => $request->status_pembayaran
+        ]);
+    }
 }

@@ -4,42 +4,6 @@
 @section('content')
 <h4 class="mb-4 fw-bold text-primary">📊 Laporan Transaksi</h4>
 
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white fw-bold">
-                📈 Pendapatan Per Hari
-            </div>
-            <div class="card-body">
-                <canvas id="pendapatanChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-success text-white fw-bold">
-                📦 Jumlah Pesanan Per Hari
-            </div>
-            <div class="card-body">
-                <canvas id="pesananChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 mt-4">
-        <div class="card shadow-sm">
-            <div class="card-header bg-warning text-dark fw-bold">
-                🟢 Status Laundry
-            </div>
-            <div class="card-body">
-                <canvas id="statusChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <form method="GET" action="{{ route('laporan.index') }}" class="row g-3 mb-4">
     <div class="col-md-4">
         <label>Tanggal Awal</label>
@@ -52,14 +16,6 @@
     <div class="col-md-4 d-flex align-items-end">
         <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
     </div>
-</form>
-<form method="POST" action="{{ route('laporan.cetak') }}" target="_blank" class="d-inline">
-    @csrf
-    <input type="hidden" name="tanggal_awal" value="{{ $tanggal_awal }}">
-    <input type="hidden" name="tanggal_akhir" value="{{ $tanggal_akhir }}">
-    <button type="submit" class="btn btn-outline-danger mb-3">
-        <i class="fa-solid fa-print me-1"></i> Cetak PDF
-    </button>
 </form>
 
 <div class="row mb-4">
@@ -81,8 +37,19 @@
     </div>
 </div>
 
+<!-- Baris judul dan tombol cetak PDF -->
+<div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+    <h5 class="mb-0">📋 Daftar Pesanan</h5>
+    <form method="POST" action="{{ route('laporan.cetak') }}" target="_blank" class="d-inline">
+        @csrf
+        <input type="hidden" name="tanggal_awal" value="{{ $tanggal_awal }}">
+        <input type="hidden" name="tanggal_akhir" value="{{ $tanggal_akhir }}">
+        <button type="submit" class="btn btn-outline-danger">
+            <i class="fa-solid fa-print me-1"></i> Cetak PDF
+        </button>
+    </form>
+</div>
 
-<h5 class="mb-3">📋 Daftar Pesanan</h5>
 <div class="table-responsive">
     <table class="table table-bordered">
         <thead class="table-light">
@@ -132,6 +99,30 @@
         </tbody>
     </table>
 </div>
+
+<!-- Grafik di bawah tabel -->
+<div class="row mb-4 mt-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white fw-bold">
+                📈 Pendapatan Per Hari
+            </div>
+            <div class="card-body">
+                <canvas id="pendapatanChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white fw-bold">
+                📦 Jumlah Pesanan Per Hari
+            </div>
+            <div class="card-body">
+                <canvas id="pesananChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -154,6 +145,7 @@
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     ticks: {
@@ -181,7 +173,8 @@
             }]
         },
         options: {
-            responsive: true
+            responsive: true,
+            maintainAspectRatio: false
         }
     });
 

@@ -63,6 +63,17 @@
     .pesanan-card .btn-warning:hover, .pesanan-card .btn-danger:hover {
         opacity: 0.85;
     }
+    .status-laundry-select {
+        background: #f4f6fb;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-weight: 500;
+        transition: border 0.2s;
+    }
+    .status-laundry-select:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 2px #4e73df33;
+    }
 </style>
 
 <div class="row">
@@ -141,19 +152,69 @@
               </div>
               <div class="col-md-6">
                 <p><strong>Tanggal Pesanan:</strong> {{ \Carbon\Carbon::parse($item->tanggal_pesanan)->format('d M Y H:i') }}</p>
-                <p><strong>Status Laundry:</strong>
-                  <form class="form-update-status-laundry d-inline" data-id="{{ $item->id }}">
-                    <select name="status_laundry" class="form-select form-select-sm d-inline w-auto status-laundry-select" style="display:inline-block;">
-                      <option value="proses_cuci" @if($item->status_laundry=='proses_cuci') selected @endif>Proses Cuci</option>
-                      <option value="proses_pengeringan" @if($item->status_laundry=='proses_pengeringan') selected @endif>Proses Pengeringan</option>
-                      <option value="proses_setrika" @if($item->status_laundry=='proses_setrika') selected @endif>Proses Setrika</option>
-                      <option value="selesai" @if($item->status_laundry=='selesai') selected @endif>Selesai</option>
-                      <option value="dibatalkan" @if($item->status_laundry=='dibatalkan') selected @endif>Dibatalkan</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary ms-2 btn-update-status">Simpan</button>
-                  </form>
-                </p>
-                <p><strong>Status Pembayaran:</strong> {{ ucfirst(str_replace('_', ' ', $item->status_pembayaran)) }}</p>
+                <div class="mb-2">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="fw-bold">Status Laundry:</span>
+                        <form class="form-update-status-laundry d-flex align-items-center gap-2 flex-wrap" data-id="{{ $item->id }}" style="flex:1 1 auto; min-width:220px;">
+                            <span class="badge
+                                @if($item->status_laundry == 'selesai') bg-success
+                                @elseif($item->status_laundry == 'proses_cuci' || $item->status_laundry == 'proses_pengeringan' || $item->status_laundry == 'proses_setrika') bg-warning text-dark
+                                @elseif($item->status_laundry == 'dibatalkan') bg-danger
+                                @else bg-secondary
+                                @endif
+                                me-2"
+                                style="min-width:90px"
+                            >
+                                <i class="fas
+                                    @if($item->status_laundry == 'selesai') fa-check-circle
+                                    @elseif($item->status_laundry == 'dibatalkan') fa-times-circle
+                                    @else fa-sync-alt
+                                    @endif"></i>
+                                {{ ucfirst(str_replace('_', ' ', $item->status_laundry)) }}
+                            </span>
+                            <select name="status_laundry" class="form-select form-select-sm w-auto status-laundry-select" style="min-width:150px; max-width:180px;">
+                                <option value="proses_cuci" @if($item->status_laundry=='proses_cuci') selected @endif>Proses Cuci</option>
+                                <option value="proses_pengeringan" @if($item->status_laundry=='proses_pengeringan') selected @endif>Proses Pengeringan</option>
+                                <option value="proses_setrika" @if($item->status_laundry=='proses_setrika') selected @endif>Proses Setrika</option>
+                                <option value="selesai" @if($item->status_laundry=='selesai') selected @endif>Selesai</option>
+                                <option value="dibatalkan" @if($item->status_laundry=='dibatalkan') selected @endif>Dibatalkan</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary btn-update-status ms-2">
+                                <i class="fas fa-save"></i> Simpan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="fw-bold">Status Pembayaran:</span>
+                        <form class="form-update-status-bayar d-flex align-items-center gap-2 flex-wrap" data-id="{{ $item->id }}" style="flex:1 1 auto; min-width:220px;">
+                            <span class="badge
+                                @if($item->status_pembayaran == 'sudah_bayar') bg-success
+                                @elseif($item->status_pembayaran == 'bayar_sebagian') bg-warning text-dark
+                                @else bg-danger
+                                @endif
+                                me-2"
+                                style="min-width:90px"
+                            >
+                                <i class="fas
+                                    @if($item->status_pembayaran == 'sudah_bayar') fa-check
+                                    @elseif($item->status_pembayaran == 'bayar_sebagian') fa-hourglass-half
+                                    @else fa-times
+                                    @endif"></i>
+                                {{ ucfirst(str_replace('_', ' ', $item->status_pembayaran)) }}
+                            </span>
+                            <select name="status_pembayaran" class="form-select form-select-sm w-auto status-bayar-select" style="min-width:150px; max-width:180px;">
+                                <option value="sudah_bayar" @if($item->status_pembayaran=='sudah_bayar') selected @endif>Sudah Bayar</option>
+                                <option value="bayar_sebagian" @if($item->status_pembayaran=='bayar_sebagian') selected @endif>Bayar Sebagian</option>
+                                <option value="belum_bayar" @if($item->status_pembayaran=='belum_bayar') selected @endif>Belum Bayar</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary btn-update-status-bayar ms-2">
+                                <i class="fas fa-save"></i> Simpan
+                            </button>
+                        </form>
+                    </div>
+                </div>
               </div>
             </div>
             <hr>
@@ -271,6 +332,63 @@ $(document).on('submit', '.form-update-status-laundry', function(e) {
             
             // Tampilkan notifikasi
             alert('Status laundry berhasil diupdate!');
+        },
+        error: function() {
+            btn.prop('disabled', false).text('Simpan');
+            alert('Gagal update status!');
+        }
+    });
+});
+
+$(document).on('submit', '.form-update-status-bayar', function(e) {
+    e.preventDefault();
+    var form = $(this);
+    var id = form.data('id');
+    var status = form.find('select[name="status_pembayaran"]').val();
+    var btn = form.find('.btn-update-status-bayar');
+    btn.prop('disabled', true).text('Menyimpan...');
+    
+    $.ajax({
+        url: '/admin/pesanan/' + id + '/update-status-bayar',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            status_pembayaran: status
+        },
+        success: function(res) {
+            btn.prop('disabled', false).text('Simpan');
+            
+            // Update badge status di card
+            var card = form.closest('.modal').closest('.col-md-4').find('.pesanan-status');
+            var statusText = status.replace(/_/g, ' ');
+            statusText = statusText.charAt(0).toUpperCase() + statusText.slice(1);
+            
+            // Update text
+            card.text(statusText);
+            
+            // Update warna badge
+            card.removeClass('bg-success bg-warning bg-danger bg-secondary text-dark');
+            if (status == 'sudah_bayar') {
+                card.addClass('bg-success');
+            } else if (status == 'bayar_sebagian') {
+                card.addClass('bg-warning text-dark');
+            } else {
+                card.addClass('bg-danger');
+            }
+            
+            // Update icon
+            var icon = card.find('i');
+            icon.removeClass('fa-check fa-hourglass-half fa-times');
+            if (status == 'sudah_bayar') {
+                icon.addClass('fa-check');
+            } else if (status == 'bayar_sebagian') {
+                icon.addClass('fa-hourglass-half');
+            } else {
+                icon.addClass('fa-times');
+            }
+            
+            // Tampilkan notifikasi
+            alert('Status pembayaran berhasil diupdate!');
         },
         error: function() {
             btn.prop('disabled', false).text('Simpan');

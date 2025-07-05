@@ -64,6 +64,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Update status laundry via AJAX
     Route::post('/pesanan/{pesanan}/update-status-laundry', [PesananController::class, 'updateStatusLaundry'])->name('pesanan.update-status-laundry');
     
+    // Update status pembayaran via AJAX
+    Route::post('/pesanan/{pesanan}/update-status-bayar', [PesananController::class, 'updateStatusBayar'])->name('pesanan.update-status-bayar');
+    
     // Cetak nota pesanan
     Route::get('/pesanan/{pesanan}/cetak', [PesananController::class, 'cetak'])->name('pesanan.cetak');
 

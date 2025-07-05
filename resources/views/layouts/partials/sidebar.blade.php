@@ -52,7 +52,7 @@
                 <li class="sidebar-item">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="sidebar-link btn btn-link text-left w-100 pl-3">
+                        <button type="submit" class="sidebar-link btn btn-link text-left">
                             <i data-feather="log-out" class="feather-icon"></i>
                             <span class="hide-menu">Logout</span>
                         </button>

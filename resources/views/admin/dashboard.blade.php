@@ -32,6 +32,39 @@
     .progress-bar {
         background-color: #007bff;
     }
+    .chart-container {
+        position: relative;
+        height: 220px;
+        min-height: 200px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .chart-container canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 220px;
+    }
+    .quick-menu-card {
+        transition: box-shadow 0.2s, transform 0.2s;
+        cursor: pointer;
+        border-radius: 1rem;
+    }
+    .quick-menu-card:hover {
+        box-shadow: 0 0 0.5rem #007bff33, 0 2px 8px #00000022;
+        transform: translateY(-4px) scale(1.03);
+    }
+    .card,
+    .quick-menu-card {
+        box-shadow: 0 2px 16px 0 #00000018, 0 1.5px 6px 0 #007bff22;
+        border-radius: 1.1rem;
+        transition: box-shadow 0.25s, transform 0.22s;
+    }
+    .card:hover,
+    .quick-menu-card:hover {
+        box-shadow: 0 8px 32px 0 #007bff33, 0 4px 16px 0 #00000022;
+        transform: translateY(-6px) scale(1.03);
+        z-index: 2;
+    }
 </style>
 @endpush
 
@@ -42,7 +75,7 @@
 <div class="page-breadcrumb">
     <div class="row">
         <div class="col-7 align-self-center">
-            <h3 class="page-title text-truncate text-dark font-weight-medium mb-1">Selamat Datang, {{ Auth::user()->nama }}!</h3>
+            <h3 class="page-title text-truncate text-dark font-weight-medium mb-1">Selamat Datang, {{ Auth::user()->nama }}</h3>
             <div class="d-flex align-items-center">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb m-0 p-0">
@@ -51,6 +84,7 @@
                 </nav>
             </div>
         </div>
+        <br>
         <div class="col-5 align-self-center">
             <div class="customize-input float-right">
                 <select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">
@@ -73,6 +107,7 @@
     </div>
 @endif
 
+<br>
 <!-- ============================================================== -->
 <!-- Container fluid  -->
 <!-- ============================================================== -->
@@ -144,56 +179,127 @@
     <!-- End First Cards -->
     <!-- *************************************************************** -->
     
+    <div class="row mb-4">
+        <div class="col">
+            <a href="{{ route('pesanan.create') }}" class="text-decoration-none">
+                <div class="card text-center shadow-sm h-100 quick-menu-card">
+                    <div class="card-body">
+                        <i class="fas fa-plus fa-2x text-success mb-2"></i>
+                        <div class="font-weight-bold">Tambah Pesanan</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{ route('pesanan.index') }}" class="text-decoration-none">
+                <div class="card text-center shadow-sm h-100 quick-menu-card">
+                    <div class="card-body">
+                        <i class="fas fa-list fa-2x text-primary mb-2"></i>
+                        <div class="font-weight-bold">Lihat Pesanan</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{ route('pelanggan.index') }}" class="text-decoration-none">
+                <div class="card text-center shadow-sm h-100 quick-menu-card">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x text-info mb-2"></i>
+                        <div class="font-weight-bold">Pelanggan</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{ route('layanan.index') }}" class="text-decoration-none">
+                <div class="card text-center shadow-sm h-100 quick-menu-card">
+                    <div class="card-body">
+                        <i class="fas fa-tags fa-2x text-warning mb-2"></i>
+                        <div class="font-weight-bold">Layanan</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{ route('laporan.index') }}" class="text-decoration-none">
+                <div class="card text-center shadow-sm h-100 quick-menu-card">
+                    <div class="card-body">
+                        <i class="fas fa-file-alt fa-2x text-dark mb-2"></i>
+                        <div class="font-weight-bold">Laporan</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
     <!-- *************************************************************** -->
     <!-- Start Sales Charts Section -->
     <!-- *************************************************************** -->
-    <div class="row">
-        <div class="col-lg-4 col-md-12">
-            <div class="card">
-                <div class="card-body">
+    <div class="row align-items-stretch">
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h4 class="card-title">Status Pesanan</h4>
-                    <div id="status-pesanan" class="mt-2" style="height:283px; width:100%;"></div>
-                    <ul class="list-style-none mb-0">
-                        <li>
-                            <i class="fas fa-circle text-success font-10 mr-2"></i>
-                            <span class="text-muted">Selesai</span>
-                            <span class="text-dark float-right font-weight-medium">{{ \App\Models\Pesanan::where('status_laundry', 'selesai')->count() }}</span>
-                        </li>
-                        <li class="mt-3">
-                            <i class="fas fa-circle text-warning font-10 mr-2"></i>
-                            <span class="text-muted">Proses</span>
-                            <span class="text-dark float-right font-weight-medium">{{ \App\Models\Pesanan::whereIn('status_laundry', ['proses_cuci','proses_pengeringan','proses_setrika'])->count() }}</span>
-                        </li>
-                        <li class="mt-3">
-                            <i class="fas fa-circle text-info font-10 mr-2"></i>
-                            <span class="text-muted">Baru</span>
-                            <span class="text-dark float-right font-weight-medium">{{ \App\Models\Pesanan::where('status_laundry', 'menunggu')->count() }}</span>
-                        </li>
-                    </ul>
+                    @php
+                        $selesai = \App\Models\Pesanan::where('status_laundry', 'selesai')->count();
+                        $proses = \App\Models\Pesanan::whereIn('status_laundry', ['proses_cuci','proses_pengeringan','proses_setrika'])->count();
+                        $baru = \App\Models\Pesanan::where('status_laundry', 'menunggu')->count();
+                        $total = $selesai + $proses + $baru;
+                    @endphp
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-check-circle text-success"></i> Selesai</span>
+                            <span class="font-weight-bold text-success">{{ $selesai }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: {{ $total > 0 ? ($selesai/$total*100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-sync text-warning"></i> Proses</span>
+                            <span class="font-weight-bold text-warning">{{ $proses }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: {{ $total > 0 ? ($proses/$total*100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-clock text-info"></i> Baru</span>
+                            <span class="font-weight-bold text-info">{{ $baru }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: {{ $total > 0 ? ($baru/$total*100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                    <a href="{{ route('pesanan.index') }}" class="btn btn-primary btn-block mt-4">
+                        Lihat Semua Pesanan
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-12">
-            <div class="card">
-                <div class="card-body">
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h4 class="card-title">Pendapatan Bulanan</h4>
-                    <div class="net-income mt-4 position-relative" style="height:294px;">
-                        <canvas id="pendapatan-chart" height="294"></canvas>
+                    <div class="chart-container mt-4 flex-grow-1">
+                        <canvas id="pendapatan-chart"></canvas>
                     </div>
-                    <ul class="list-inline text-center mt-5 mb-2">
+                    <ul class="list-inline text-center mt-5 mb-2 mt-auto">
                         <li class="list-inline-item text-muted font-italic">Pendapatan 6 bulan terakhir</li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-12">
-            <div class="card">
-                <div class="card-body">
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h4 class="card-title mb-4">Layanan Terpopuler</h4>
-                    <div class="" style="height:180px">
-                        <canvas id="layanan-chart" height="180"></canvas>
+                    <div class="chart-container flex-grow-1" style="height:220px">
+                        <canvas id="layanan-chart"></canvas>
                     </div>
-                    <div class="row mb-3 align-items-center mt-1 mt-5">
+                    <div class="row mb-3 align-items-center mt-1 mt-5 mt-auto">
                         @php
                             $layananPopuler = \App\Models\DetailPesanan::selectRaw('layanan_id, COUNT(*) as total')
                                 ->with('layanan')
@@ -259,8 +365,8 @@
                         </div>
                     </div>
                     <div class="pl-4 mb-5">
-                        <div class="stats ct-charts position-relative" style="height: 315px;">
-                            <canvas id="pesanan-chart" height="315"></canvas>
+                        <div class="chart-container stats ct-charts position-relative" style="height: 250px;">
+                            <canvas id="pesanan-chart"></canvas>
                         </div>
                     </div>
                     <ul class="list-inline text-center mt-4 mb-0">
@@ -427,43 +533,6 @@
 if (typeof feather !== 'undefined') {
     feather.replace();
 }
-// Status Pesanan Chart (Doughnut)
-const statusCtx = document.getElementById('status-pesanan');
-if (statusCtx) {
-    @php
-        $selesai = \App\Models\Pesanan::where('status_laundry', 'selesai')->count();
-        $proses = \App\Models\Pesanan::whereIn('status_laundry', ['proses_cuci','proses_pengeringan','proses_setrika'])->count();
-        $baru = \App\Models\Pesanan::where('status_laundry', 'menunggu')->count();
-    @endphp
-    
-    @if($selesai > 0 || $proses > 0 || $baru > 0)
-    new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Selesai', 'Proses', 'Baru'],
-            datasets: [{
-                data: [{{ $selesai }}, {{ $proses }}, {{ $baru }}],
-                backgroundColor: ['#28a745', '#ffc107', '#17a2b8'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
-    @else
-    // Tampilkan pesan jika tidak ada data
-    statusCtx.style.display = 'none';
-    statusCtx.parentElement.innerHTML = '<div class="text-center text-muted mt-4">Belum ada data pesanan</div>';
-    @endif
-}
-
 // Pendapatan Chart (Line)
 const pendapatanCtx = document.getElementById('pendapatan-chart');
 if (pendapatanCtx) {
