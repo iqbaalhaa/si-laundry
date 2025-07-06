@@ -48,6 +48,16 @@
                 </li>
 
                 <li class="list-divider"></li>
+                <li class="nav-small-cap"><span class="hide-menu">Pengaturan</span></li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('pengaturan.index') }}">
+                        <i data-feather="settings" class="feather-icon"></i>
+                        <span class="hide-menu">Pengaturan</span>
+                    </a>
+                </li>
+
+                <li class="list-divider"></li>
 
                 <li class="sidebar-item">
                     <form method="POST" action="{{ route('logout') }}">

@@ -41,9 +41,7 @@
                         <span class="ml-2 d-none d-lg-inline-block">Hi, {{ Auth::user()->name ?? 'Admin' }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#"><i data-feather="user" class="svg-icon mr-2 ml-1"></i>
-                            Profil</a>
-                        <a class="dropdown-item" href="#"><i data-feather="settings"
+                        <a class="dropdown-item" href="{{ route('pengaturan.index') }}"><i data-feather="settings"
                                 class="svg-icon mr-2 ml-1"></i> Pengaturan</a>
                         <div class="dropdown-divider"></div>
                         <form method="POST" action="{{ route('logout') }}">

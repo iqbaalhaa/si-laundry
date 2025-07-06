@@ -7,6 +7,7 @@ use App\Http\Controllers\LayananController;
 use App\Http\Controllers\StatusLaundryController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PengaturanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,5 +74,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::post('/laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
+
+    // Pengaturan
+    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
+    Route::post('/pengaturan/profil', [PengaturanController::class, 'updateProfil'])->name('pengaturan.profil');
+    Route::post('/pengaturan/email', [PengaturanController::class, 'updateEmail'])->name('pengaturan.email');
+    Route::post('/pengaturan/password', [PengaturanController::class, 'updatePassword'])->name('pengaturan.password');
 
 });

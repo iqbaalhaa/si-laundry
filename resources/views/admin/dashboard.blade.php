@@ -533,42 +533,90 @@
 if (typeof feather !== 'undefined') {
     feather.replace();
 }
+
+// Debug: Check if Chart.js is loaded
+console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+
 // Pendapatan Chart (Line)
 const pendapatanCtx = document.getElementById('pendapatan-chart');
-if (pendapatanCtx) {
-    new Chart(pendapatanCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-            datasets: [{
-                label: 'Pendapatan',
-                data: [12000000, 15000000, 18000000, 14000000, 20000000, 22000000],
-                borderColor: '#007bff',
-                backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
+console.log('Pendapatan canvas element:', pendapatanCtx);
+
+if (pendapatanCtx && typeof Chart !== 'undefined') {
+    @php
+        $pendapatanData = [];
+        $bulanLabels = [];
+        $hasPendapatanData = false;
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $pendapatan = \App\Models\Pesanan::where('status_laundry', 'selesai')
+                ->whereYear('created_at', $bulan->year)
+                ->whereMonth('created_at', $bulan->month)
+                ->sum('jumlah_total');
+            
+            if ($pendapatan > 0) $hasPendapatanData = true;
+            
+            $pendapatanData[] = $pendapatan;
+            $bulanLabels[] = $bulan->format('M Y');
+        }
+    @endphp
+    
+    console.log('Pendapatan data:', {!! json_encode($pendapatanData) !!});
+    console.log('Bulan labels:', {!! json_encode($bulanLabels) !!});
+    console.log('Has data:', {!! json_encode($hasPendapatanData) !!});
+    
+    @if($hasPendapatanData)
+    try {
+        new Chart(pendapatanCtx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($bulanLabels) !!},
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: {!! json_encode($pendapatanData) !!},
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'Rp ' + (value / 1000000) + 'M';
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + (value / 1000000).toFixed(1) + 'M';
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+        console.log('Pendapatan chart created successfully');
+    } catch (error) {
+        console.error('Error creating pendapatan chart:', error);
+        pendapatanCtx.style.display = 'none';
+        pendapatanCtx.parentElement.innerHTML = '<div class="text-center text-muted mt-4">Error loading chart: ' + error.message + '</div>';
+    }
+    @else
+    // Tampilkan pesan jika tidak ada data
+    pendapatanCtx.style.display = 'none';
+    pendapatanCtx.parentElement.innerHTML = '<div class="text-center text-muted mt-4">Belum ada data pendapatan dalam 6 bulan terakhir</div>';
+    @endif
+} else {
+    console.error('Chart.js not loaded or canvas element not found');
+    if (pendapatanCtx) {
+        pendapatanCtx.style.display = 'none';
+        pendapatanCtx.parentElement.innerHTML = '<div class="text-center text-muted mt-4">Chart.js tidak dapat dimuat</div>';
+    }
 }
 
 // Layanan Chart (Bar)
