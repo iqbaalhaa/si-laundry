@@ -55,13 +55,20 @@
                         <div class="tab-pane fade show active" id="profil" role="tabpanel" aria-labelledby="profil-tab">
                             <div class="row mt-4">
                                 <div class="col-md-8">
-                                    <form action="{{ route('pengaturan.profil') }}" method="POST">
+                                    <form action="{{ route('pengaturan.profil') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
                                             <label for="nama">Nama Lengkap</label>
                                             <input type="text" class="form-control @error('nama') is-invalid @enderror" 
                                                    id="nama" name="nama" value="{{ old('nama', $user->nama) }}" required>
                                             @error('nama')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foto">Foto Profil</label>
+                                            <input type="file" class="form-control-file @error('foto') is-invalid @enderror" id="foto" name="foto" accept="image/*">
+                                            @error('foto')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -78,7 +85,7 @@
                                 </div>
                                 <div class="col-md-4 text-center">
                                     <div class="profile-pic-wrapper">
-                                        <img src="{{ asset('template/assets/images/users/profile-pic.jpg') }}" 
+                                        <img src="{{ $user->foto ? asset('image/'.$user->foto) : asset('template/assets/images/users/profile-pic.jpg') }}" 
                                              alt="Profile Picture" class="rounded-circle" width="150" height="150">
                                         <div class="mt-3">
                                             <button class="btn btn-outline-primary btn-sm">

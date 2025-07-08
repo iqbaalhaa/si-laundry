@@ -36,7 +36,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#"
                         data-toggle="dropdown">
-                        <img src="{{ asset('template/assets/images/users/profile-pic.jpg') }}" alt="user"
+                        <img src="{{ Auth::user()->foto ? asset('image/' . Auth::user()->foto) : asset('template/assets/images/users/profile-pic.jpg') }}" alt="user"
                             class="rounded-circle" width="40">
                         <span class="ml-2 d-none d-lg-inline-block">Hi, {{ Auth::user()->name ?? 'Admin' }}</span>
                     </a>

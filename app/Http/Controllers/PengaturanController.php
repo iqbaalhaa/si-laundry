@@ -21,6 +21,7 @@ class PengaturanController extends Controller
         
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -28,6 +29,18 @@ class PengaturanController extends Controller
         }
 
         $user->nama = $request->nama;
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = uniqid('profile_').'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('image'), $filename);
+            // Hapus foto lama jika ada dan bukan default
+            if ($user->foto && file_exists(public_path('image/'.$user->foto))) {
+                @unlink(public_path('image/'.$user->foto));
+            }
+            $user->foto = $filename;
+        }
+
         $user->save();
 
         return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
