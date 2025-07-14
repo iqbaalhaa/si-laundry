@@ -62,7 +62,7 @@
 
     <div class="mb-3">
         <label>Status Laundry</label>
-        <select name="status_laundry" class="form-control" required>
+        <select name="status_laundry" class="form-control" required id="status-laundry-select">
             <option value="menunggu">Menunggu</option>
             <option value="proses_cuci">Proses Cuci</option>
             <option value="proses_pengeringan">Proses Pengeringan</option>
@@ -88,12 +88,87 @@
         let item = container.querySelector('.layanan-item').cloneNode(true);
         item.querySelectorAll('input, select').forEach(el => el.value = '');
         container.appendChild(item);
+        updateStatusLaundryOptions();
     });
 
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-layanan')) {
             e.target.closest('.layanan-item').remove();
+            updateStatusLaundryOptions();
         }
     });
+
+    // --- STATUS LAUNDRY DINAMIS ---
+    // Mapping status sesuai layanan
+    const statusMap = {
+        'cuci': [
+            {value: 'menunggu', label: 'Menunggu'},
+            {value: 'proses_cuci', label: 'Proses Cuci'},
+            {value: 'proses_pengeringan', label: 'Proses Pengeringan'},
+            {value: 'siap_diambil', label: 'Siap Diambil'},
+            {value: 'selesai', label: 'Selesai'},
+            {value: 'dibatalkan', label: 'Dibatalkan'},
+        ],
+        'setrika': [
+            {value: 'menunggu', label: 'Menunggu'},
+            {value: 'proses_setrika', label: 'Proses Setrika'},
+            {value: 'siap_diambil', label: 'Siap Diambil'},
+            {value: 'selesai', label: 'Selesai'},
+            {value: 'dibatalkan', label: 'Dibatalkan'},
+        ],
+        'cuci_setrika': [
+            {value: 'menunggu', label: 'Menunggu'},
+            {value: 'proses_cuci', label: 'Proses Cuci'},
+            {value: 'proses_pengeringan', label: 'Proses Pengeringan'},
+            {value: 'proses_setrika', label: 'Proses Setrika'},
+            {value: 'siap_diambil', label: 'Siap Diambil'},
+            {value: 'selesai', label: 'Selesai'},
+            {value: 'dibatalkan', label: 'Dibatalkan'},
+        ]
+    };
+
+    // Ambil nama layanan dari select option
+    function getSelectedLayananNames() {
+        let selects = document.querySelectorAll('select[name="layanan_id[]"]');
+        let names = [];
+        selects.forEach(sel => {
+            let selected = sel.options[sel.selectedIndex];
+            if (selected && selected.text) {
+                let nama = selected.text.toLowerCase();
+                if (nama.includes('cuci') && !names.includes('cuci')) names.push('cuci');
+                if (nama.includes('setrika') && !names.includes('setrika')) names.push('setrika');
+            }
+        });
+        return names;
+    }
+
+    function updateStatusLaundryOptions() {
+        let layanan = getSelectedLayananNames();
+        let statusList = statusMap['cuci_setrika']; // default
+        if (layanan.length === 1 && layanan[0] === 'cuci') statusList = statusMap['cuci'];
+        else if (layanan.length === 1 && layanan[0] === 'setrika') statusList = statusMap['setrika'];
+        else if (layanan.length === 2 && layanan.includes('cuci') && layanan.includes('setrika')) statusList = statusMap['cuci_setrika'];
+        // Bisa tambah kombinasi lain di sini
+
+        let select = document.getElementById('status-laundry-select');
+        let current = select.value;
+        select.innerHTML = '';
+        statusList.forEach(opt => {
+            let option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.label;
+            if (opt.value === current) option.selected = true;
+            select.appendChild(option);
+        });
+    }
+
+    // Trigger update saat layanan dipilih/diubah
+    document.addEventListener('change', function(e) {
+        if (e.target.matches('select[name="layanan_id[]"]')) {
+            updateStatusLaundryOptions();
+        }
+    });
+    // Inisialisasi awal
+    updateStatusLaundryOptions();
 </script>
 @endsection

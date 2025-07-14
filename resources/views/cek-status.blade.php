@@ -135,7 +135,7 @@
                     <h3 class="text-center mb-4 modern-title">Status Laundry</h3>
                     @isset($pesanan)
                         @php
-                            $statusList = [
+                            $statusKeys = array_keys($statusList ?? [
                                 'menunggu' => 'Menunggu',
                                 'proses_cuci' => 'Proses Cuci',
                                 'proses_pengeringan' => 'Proses Pengeringan',
@@ -143,8 +143,7 @@
                                 'siap_diambil' => 'Siap Diambil',
                                 'selesai' => 'Selesai',
                                 'dibatalkan' => 'Dibatalkan',
-                            ];
-                            $statusKeys = array_keys($statusList);
+                            ]);
                             $currentStatus = $pesanan->status_laundry;
                             $currentIndex = array_search($currentStatus, $statusKeys);
                         @endphp
@@ -173,7 +172,7 @@
                             @endforeach
                         </div>
                         <div class="d-flex justify-content-between mb-4">
-                            @foreach($statusList as $label)
+                            @foreach($statusList ?? [] as $label)
                                 <div class="modern-label flex-fill">{{ $label }}</div>
                             @endforeach
                         </div>
