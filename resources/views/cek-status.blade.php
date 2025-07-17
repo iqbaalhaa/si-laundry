@@ -161,20 +161,34 @@
                                     'selesai' => '✅',
                                     'dibatalkan' => '❌',
                                 ];
+                                // Selalu exclude 'dibatalkan' dari loop
+                                $showStatusKeys = array_filter($statusKeys, function($s) { return $s !== 'dibatalkan'; });
                             @endphp
-                            @foreach($statusKeys as $i => $status)
-                                <div class="circle @if($i < $currentIndex) checked @elseif($i == $currentIndex && $currentStatus !== 'dibatalkan') active @elseif($currentStatus === 'dibatalkan' && $status === 'dibatalkan') bg-danger @endif">
+                            @foreach($showStatusKeys as $i => $status)
+                                <div class="circle @if($i < $currentIndex) checked @elseif($i == $currentIndex && $currentStatus !== 'dibatalkan') active @endif">
                                     {!! $icons[$status] ?? '' !!}
                                 </div>
-                                @if($i < count($statusKeys) - 1)
-                                    <div class="line @if($i < $currentIndex && $currentStatus !== 'dibatalkan') active @elseif($currentStatus === 'dibatalkan' && $status === 'proses_setrika') bg-danger @endif"></div>
+                                @if($loop->index < count($showStatusKeys) - 1)
+                                    <div class="line @if($i < $currentIndex && $currentStatus !== 'dibatalkan') active @endif"></div>
                                 @endif
                             @endforeach
+                            @if($currentStatus === 'dibatalkan')
+                                <div class="circle bg-danger">{!! $icons['dibatalkan'] !!}</div>
+                            @endif
                         </div>
                         <div class="d-flex justify-content-between mb-4">
-                            @foreach($statusList ?? [] as $label)
+                            @php
+                                $showStatusList = $statusList ?? [];
+                                if ($currentStatus !== 'dibatalkan') {
+                                    unset($showStatusList['dibatalkan']);
+                                }
+                            @endphp
+                            @foreach($showStatusList as $label)
                                 <div class="modern-label flex-fill">{{ $label }}</div>
                             @endforeach
+                            @if($currentStatus === 'dibatalkan')
+                                <div class="modern-label flex-fill">Dibatalkan</div>
+                            @endif
                         </div>
                         <div class="row justify-content-center">
                             <div class="col-md-8">
